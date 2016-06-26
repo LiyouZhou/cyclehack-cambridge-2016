@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
+function initialize() {
+    var l = document.getElementsByClassName("googlemap")
+    for (var i=0; i<l.length; i++)
+    {
+        var elem = l[i];
+        var latlon = new google.maps.LatLng(parseFloat(elem.getAttribute("lat")),parseFloat(elem.getAttribute("lon")));
+        var mapProp = {
+            center:latlon,
+            zoom:15,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        };
+
+        var map = new google.maps.Map(elem, mapProp);
+
+        var marker = new google.maps.Marker({
+            position: latlon,
+            map: map,
+            title: 'Hello World!'
+        });
+    }
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+</head>
+<body>
+<title>Reports</title>
+<ul>
+{% for report in reports %}
+  <li>
+    <img src="{{ report.properties.thumbnailUrl }}" alt="CycleHack">
+    <img src="http://maps.googleapis.com/maps/api/staticmap?center={{report.geometry.coordinates[1]}},{{report.geometry.coordinates[0]}}&zoom=15&size=500x380&markers=color:red%7Clabel:A%7C{{report.geometry.coordinates[1]}},{{report.geometry.coordinates[0]}}
+" alt="CycleHack">
+    <p>{{ report.properties.caption }}</p>
+  </li>
+{% endfor %}
+</ul>
+</body>
+</html>
