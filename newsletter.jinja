@@ -10,7 +10,10 @@
     <img src="{{ report.properties.thumbnailUrl }}" alt="CycleHack">
     <img src="http://maps.googleapis.com/maps/api/staticmap?center={{report.geometry.coordinates[1]}},{{report.geometry.coordinates[0]}}&zoom=15&size=300x300&markers=color:red%7Clabel:A%7C{{report.geometry.coordinates[1]}},{{report.geometry.coordinates[0]}}
 " alt="CycleHack">
-    <p>{{ report.properties.caption }}</p>
+    <p>
+        {{ report.properties.caption }}
+        <a href="https://www.cyclestreets.net/location/{{ report.properties.id }}">more details</a>
+    </p>
   </li>
 {% endfor %}
 </ul>
