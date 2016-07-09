@@ -26,7 +26,7 @@ reports = []
 for feature in j['features']:
 	t_epoch = feature['properties']['datetime']
 	feature_date = dt.datetime.fromtimestamp(t_epoch)
-	if now - feature_date < dt.timedelta(weeks=4):
+	if now - feature_date < dt.timedelta(weeks=1):
 		print json.dumps(feature, indent=2)
 		reports.append(feature)
 		i += 1
@@ -43,15 +43,14 @@ import webbrowser
 env = Environment(loader=FileSystemLoader('.'), trim_blocks=True, lstrip_blocks=True)
 template = env.get_template("newsletter.jinja")
 
-html = template.render(reports=reports)
+title = 'CycleStreet User Reports Week {} {}'.format(now.isocalendar()[1], now.isocalendar()[0])
+html = template.render(reports=reports, title=title)
 print html
 
 with open("newsletter.html", 'w') as fd:
 	fd.write(html)
 
 webbrowser.open_new_tab("file://"+path.abspath("newsletter.html"))
-
-exit(0)
 
 # Import smtplib for the actual sending function
 import smtplib
@@ -68,10 +67,10 @@ part1 = MIMEText(text, 'plain')
 part2 = MIMEText(html, 'html')
 
 me = "cyclehack.cambridge@gmail.com"
-you = me
-msg['Subject'] = 'News letter'
+you = [me, "noel.kavanagh@cambridgeshire.gov.uk", "anna.smith@cambridge.gov.uk"]
+msg['Subject'] = title
 msg['From'] = me
-msg['To'] = you
+
 msg.attach(part1)
 msg.attach(part2)
 
@@ -81,6 +80,8 @@ login, password = me, "cyclehack2016"#getpass('Gmail password:')
 s = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10)
 try:
 	s.login(login, password)
-	s.sendmail(me, [you], msg.as_string())
+	for y in you:
+		msg['To'] = y
+		s.sendmail(me, [y], msg.as_string())
 finally:
 	s.quit()
